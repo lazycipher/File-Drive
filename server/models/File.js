@@ -1,11 +1,20 @@
 const { Schema, model } = require('mongoose');
 
 const FileSchema = new Schema({
-    name: {
+    original_name: {
         type: String
     },
-    download_url: {
+    file_name: {
+      type: String
+    },
+    mimetype: {
+      type: String
+    },
+    path: {
         type: String
+    },
+    size: {
+      type: Number
     },
     is_public: {
         type: Boolean,
@@ -19,6 +28,9 @@ const FileSchema = new Schema({
         username: {
           type: String,
           required: true
+        },
+        avatar_url: {
+          type: String
         }
     },
     uploaded_date: {
