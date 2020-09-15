@@ -116,8 +116,8 @@ const Dashboard = ({ auth, isAuthenticated }) => {
                 setProgress(progress);
             }
         }).then(res => {
-            setUploadedFile({ name: res.data.file.name,
-                        path: '/' + res.data.file.path
+            setUploadedFile({ name: res.data.saveFile.file_name,
+                        path: '/' + res.data.saveFile.path
                     })
         }).catch(err => console.log(err))
     };

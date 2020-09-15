@@ -41,12 +41,19 @@ router.post('/upload', auth, upload.single('file'), async (req, res) => {
             size: file.size,
         });  
         const saveFile = await newFile.save();
-
-        files.push(saveFile._id);
-        const updateUser = await User.findOneAndUpdate({_id}, {files: files})
+        let updateUser;
+        if(files){
+            files.push(saveFile._id);
+            updateUser = await User.findOneAndUpdate({_id}, {files: files});
+            
+        } else{ 
+            updateUser = await User.findOneAndUpdate({_id}, {files: [saveFile._id]});
+        }
         if(!saveFile || !updateUser) throw Error("Something went wrong while uploading the file");
+        
         res.status(201).send({msg: "File Uploaded", saveFile});
     } catch(e) {
+        console.log(e.message)
         res.status(400).json({ msg: e.message });
     }
     

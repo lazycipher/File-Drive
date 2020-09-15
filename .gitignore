@@ -1,3 +1,5 @@
+# Ignore File Uploads to local storage
+server/files/*
 # Logs
 logs
 *.log
