@@ -109,7 +109,7 @@ const Dashboard = ({ auth, isAuthenticated }) => {
             config.headers['x-auth-token'] = auth.token;
         }
 
-        axios.post('/api/file/upload', formData, config, {
+        axios.post('/api/file/upload', formData, {
             onUploadProgress: (ProgressEvent) => {
                 let progress = Math.round(
                 ProgressEvent.loaded / ProgressEvent.total * 100) + '%';

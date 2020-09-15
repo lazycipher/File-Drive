@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
-const fs = require('fs')
 
 const { PORT, MONGO_URI, MONGO_DB_NAME } = process.env;
 
