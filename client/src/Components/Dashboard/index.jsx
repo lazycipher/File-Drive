@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import {getState} from 'redux';
 import {
   Container,
   Paper,
@@ -24,6 +23,7 @@ import {
 } from '@material-ui/core/styles';
 import { Alert } from '@material-ui/lab';
 import axios from 'axios';
+import { getFiles } from '../../store/actions/fileActions';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -64,7 +64,11 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-const Dashboard = ({ auth, isAuthenticated }) => {
+const Dashboard = ({ auth, isAuthenticated, getFiles, files }) => {
+    useEffect(()=> {
+        getFiles()
+    }, [getFiles])
+
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
     const [checked, setChecked] = useState(false);
@@ -136,54 +140,61 @@ const Dashboard = ({ auth, isAuthenticated }) => {
                     <Button className={classes.btn} variant="contained" color="primary" onClick={handleFileUpload}>Upload</Button>
                     
                 </Grid>
-                <Grid item xs={12}>
-                <List component="nav" aria-label="secondary mailbox folders">
-                    <ListItem className={classes.listItem}>
-                        <ListItemAvatar><Avatar src={auth.user.avatar_url}></Avatar></ListItemAvatar>
-                        <ListItemText primary="FileName.pdf" />
-                        <IconButton>
-                            <Icon>cloud_download</Icon>
-                        </IconButton>
-                        <IconButton onClick={handleSharePopup}>
-                            <Icon>share</Icon>
-                        </IconButton>
-                        <IconButton>
-                            <Icon>delete</Icon>
-                        </IconButton>
-                    </ListItem>
-                    <Popover 
-                        open={open}
-                        anchorEl={anchorEl}
-                        onClose={handleSharePopupClose}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'center',
-                        }}
-                        transformOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'center',
-                        }}
-                        >
-                        <Paper className={classes.paper}>
-                            <span>Public Sharing:</span> 
-                            <Switch
-                                checked={checked}
-                                onChange={handleShareToggle}
-                                color="success"
-                                name="shareToggler"
-                            />
-                        </Paper>
-                    </Popover>
-                </List>
-                </Grid>
+                {files.map(file=>(
+                    <Grid item xs={12}>
+                        <List component="nav" aria-label="secondary mailbox folders">
+                            <ListItem className={classes.listItem}>
+                                <ListItemAvatar><Avatar src={file.user.avatar_url}></Avatar></ListItemAvatar>
+                                <ListItemText primary={file.original_name} secondary={file.uploaded_date.toLocaleDateString()}/>
+                                <IconButton>
+                                    <Icon>cloud_download</Icon>
+                                </IconButton>
+                                <IconButton onClick={handleSharePopup}>
+                                    <Icon>share</Icon>
+                                </IconButton>
+                                <IconButton>
+                                    <Icon>delete</Icon>
+                                </IconButton>
+                            </ListItem>
+                            <Popover 
+                                open={open}
+                                anchorEl={anchorEl}
+                                onClose={handleSharePopupClose}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'center',
+                                }}
+                                transformOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'center',
+                                }}
+                                >
+                                <Paper className={classes.paper}>
+                                    <span>Public Sharing:</span> 
+                                    <Switch
+                                        checked={checked}
+                                        onChange={handleShareToggle}
+                                        color="success"
+                                        name="shareToggler"
+                                    />
+                                </Paper>
+                            </Popover>
+                        </List>
+                    </Grid>
+                ))}
+                
             </Grid>
         </Container>
     );
 };
 
-const mapStateToProps = (state) => ({
-  auth: state.auth,
-  isAuthenticated: state.auth.isAuthenticated
-});
+const mapStateToProps = (state) => {
+    console.log(state)
+    return ({
+        auth: state.auth,
+        isAuthenticated: state.auth.isAuthenticated,
+        files: state.files.files
+      })
+};
 
-export default connect(mapStateToProps, null)(Dashboard);
+export default connect(mapStateToProps, {getFiles})(Dashboard);

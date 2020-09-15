@@ -18,8 +18,15 @@ var Storage = multer.diskStorage({
 var upload = multer({storage: Storage});
 
 
-router.post('/', auth,  async (req, res) => {
-
+router.get('/', auth,  async (req, res) => {
+    try { 
+        const files = await File.find({'username': req.user.username})
+        console.log(files)
+        res.status(200).json(files);
+    } catch(e) {
+        console.log(e.message);
+        res.status(400).json({msg: e.message})
+    }
 })
 
 router.post('/upload', auth, upload.single('file'), async (req, res) => {

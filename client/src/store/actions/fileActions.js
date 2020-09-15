@@ -1,33 +1,28 @@
 import axios from 'axios';
 import { returnErrors } from './errorActions';
 import {
-  UPLOAD_SUCCESS,
-  UPLOAD_FAILED
+  FETCH_USER_FILES_SUCCESS,
+  FETCH_USER_FILES_FAILED
 } from '../types';
 
-export const uploadFile = ({ file }) => (dispatch) => {
-  const config = {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  };
+import {tokenConfig} from './authActions';
 
-  const body = JSON.stringify({ name, email, username, password });
+export const getFiles = () => (dispatch, getState) => {
 
   axios
-    .post('/api/auth/register', body, config)
+    .get('/api/file', tokenConfig(getState))
     .then(res =>
       dispatch({
-        type: REGISTER_SUCCESS,
-        payload: res.data.auth_user
+        type: FETCH_USER_FILES_SUCCESS,
+        payload: res.data
       })
     )
     .catch(err => {
       dispatch(
-        returnErrors(err.response.data, err.response.status, 'REGISTER_FAIL')
+        returnErrors(err.response.data, err.response.status, 'FETCH_USER_FILES_FAILED')
       );
       dispatch({
-        type: REGISTER_FAIL
+        type: FETCH_USER_FILES_FAILED
       });
     });
 };
