@@ -27,3 +27,8 @@ npm run client
 
 # Server runs on http://localhost:5000 and client on http://localhost:3000
 ```
+# Features Under Development which will be added soon
+- Upload Files to any CND
+- Homepage list of user files endpoint
+- Standalone shared file page UI and endpoint
+- Delete owned file
