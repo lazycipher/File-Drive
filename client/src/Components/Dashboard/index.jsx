@@ -16,9 +16,7 @@ import {
   Popover,
   Switch,
   Button,
-  Box,
-  Typography,
-  CircularProgress
+  LinearProgress,
 } from '@material-ui/core';
 import { 
   createStyles, 
@@ -26,7 +24,6 @@ import {
 } from '@material-ui/core/styles';
 import { Alert } from '@material-ui/lab';
 import axios from 'axios';
-import {tokenConfig} from '../../store/actions/authActions';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -42,35 +39,30 @@ const useStyles = makeStyles((theme) =>
     uploadSection: {
         padding: '0.5rem',
         margin: '0.5rem auto',
-        boxShadow: theme.shadows[2]
+        boxShadow: theme.shadows[2],
+        textAlign: 'center'
     },
     listItem: {
         boxShadow: theme.shadows[2]
+    },
+    fileInput: {
+        display: 'block',
+        width: '60%',
+        borderRadius: '4rem',
+        backgroundColor: '#eee',
+        padding: '1em',
+        margin: '1rem auto'
+    },
+    btn: {
+        margin: '1rem auto'
+    },
+    alert: {
+        width: '50%',
+        margin: '1rem auto',
+        justifyContent: 'center'
     }
   }),
 );
-
-const CircularProgressWithLabel = (props) => {
-    return (
-      <Box position="relative" display="inline-flex">
-        <CircularProgress variant="static" {...props} />
-        <Box
-          top={0}
-          left={0}
-          bottom={0}
-          right={0}
-          position="absolute"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Typography variant="caption" component="div" color="textSecondary">{`${Math.round(
-            props.value,
-          )}%`}</Typography>
-        </Box>
-      </Box>
-    );
-}
 
 const Dashboard = ({ auth, isAuthenticated }) => {
     const classes = useStyles();
@@ -103,19 +95,18 @@ const Dashboard = ({ auth, isAuthenticated }) => {
         const config = {
             headers: {
               'Content-type': 'application/json'
+            },
+            onUploadProgress: (ProgressEvent) => {
+                let pg = Math.round(
+                ProgressEvent.loaded / ProgressEvent.total * 100);
+                setProgress(pg);
             }
         };
         if (auth.token) {
             config.headers['x-auth-token'] = auth.token;
         }
 
-        axios.post('/api/file/upload', formData, config, {
-            onUploadProgress: (ProgressEvent) => {
-                let progress = Math.round(
-                ProgressEvent.loaded / ProgressEvent.total * 100) + '%';
-                setProgress(progress);
-            }
-        }).then(res => {
+        axios.post('/api/file/upload', formData, config).then(res => {
             setUploadedFile({ name: res.data.saveFile.file_name,
                         path: '/' + res.data.saveFile.path
                     })
@@ -133,14 +124,16 @@ const Dashboard = ({ auth, isAuthenticated }) => {
             </Container>
         )
     }
- 
     return(
         <Container className={classes.container} maxWidth="md">
             <Grid container>
                 <Grid className={classes.uploadSection} item xs={12}>
-                    <input type="file" name="file" onChange={changeFileHandler}/>
-                    {progress && <CircularProgressWithLabel progress={progress} />}
-                    <Button variant="contained" color="primary" onClick={handleFileUpload}>Upload</Button>
+                    <input className={classes.fileInput} type="file" name="file" onChange={changeFileHandler}/>
+                    {progress && (progress===100?
+                    <Alert className={classes.alert} variant="outlined" severity="success">Upload Complete <LinearProgress variant="determinate" value={progress} /></Alert>
+                    :<Alert className={classes.alert} variant="outlined" severity="info">Uploading {progress}% <LinearProgress variant="determinate" value={progress} /></Alert>
+                    )}
+                    <Button className={classes.btn} variant="contained" color="primary" onClick={handleFileUpload}>Upload</Button>
                     
                 </Grid>
                 <Grid item xs={12}>
