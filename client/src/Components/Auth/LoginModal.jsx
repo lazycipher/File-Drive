@@ -83,7 +83,7 @@ const LoginModal = ({
         <DialogTitle id="form-dialog-title">Login</DialogTitle>
         <DialogContent dividers>
           <DialogContentText>
-            Login to enjoy creating post, comments, +1s, -1s, etc features.
+            Login to enjoy uploading features!
           </DialogContentText>
           <div>
             {msg ? <Alert severity="error">{msg}</Alert> : null}

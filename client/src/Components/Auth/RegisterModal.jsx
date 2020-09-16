@@ -102,7 +102,7 @@ const RegisterModal = ({
         <DialogTitle id="form-dialog-title">Register</DialogTitle>
         <DialogContent dividers>
           <DialogContentText>
-            Create your account to access creating post, comments, +1s, -1s, etc features.
+            Create your account to access uploading features.
           </DialogContentText>
           <div>
             {msg ? <Alert severity="error">{msg}</Alert> : null}

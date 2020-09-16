@@ -1,4 +1,4 @@
-import {FETCH_USER_FILES_SUCCESS , FETCH_USER_FILES_FAILED} from '../types';
+import {FETCH_USER_FILES_SUCCESS , FETCH_USER_FILES_FAILED, DELETE_FILE_FAILED, DELETE_FILE_SUCCESS, CLEAR_FILES} from '../types';
 
 const initialState = {
   files: [],
@@ -18,6 +18,16 @@ export default function(state = initialState, action) {
         ...state,
         loading: false
       }
+    case DELETE_FILE_SUCCESS:
+      return {
+        ...state,
+        files: state.files.filter(file => file._id !== action.payload)
+      }
+    case CLEAR_FILES: 
+    return {
+      ...state,
+      files: null
+    }
     default:
       return state;
   }

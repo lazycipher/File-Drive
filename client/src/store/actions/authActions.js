@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { returnErrors } from './errorActions';
+import { clearFiles } from './fileActions';
 import {
   USER_LOADED,
   USER_LOADING,
@@ -92,17 +93,19 @@ export const login = ({ username, password }) => (
 };
 
 
-export const logout = () => {
-  return {
+export const logout = () => (dispatch) => {
+  dispatch({
     type: LOGOUT_SUCCESS
-  };
+  });
+  dispatch(
+    clearFiles()
+  );
 };
 
 
 export const tokenConfig = (getState) => {
   
   const token = getState().auth.token;
-
   
   const config = {
     headers: {

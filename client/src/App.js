@@ -12,6 +12,8 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import Spinner from './Components/Spinner';
+import Home from './Components/Home';
 
 const App = () => {
   useEffect(()=> {
@@ -19,21 +21,9 @@ const App = () => {
   }, [])
   return (
     <Provider store={store}>
-      <Router>
-        <Route exact path = "/">
-          <AppNavbar />
-          <Dashboard />
-        </Route>
-        <Route path = "/profile">
-          <AppNavbar />
-          <Profile />
-        </Route>
-      </Router>
-      
-      
-      
+      <Home />
     </Provider>
   );
 }
 
-export default App;
+export default App

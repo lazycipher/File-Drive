@@ -20,8 +20,7 @@ var upload = multer({storage: Storage});
 
 router.get('/', auth,  async (req, res) => {
     try { 
-        const files = await File.find({'username': req.user.username})
-        console.log(files)
+        const files = await File.find({'user.username': req.user.username});
         res.status(200).json(files);
     } catch(e) {
         console.log(e.message);
@@ -66,8 +65,22 @@ router.post('/upload', auth, upload.single('file'), async (req, res) => {
     
 })
 
-router.post('/delete', auth,  async (req, res) => {
-
+router.delete('/:id', auth,  async (req, res) => {
+    try {
+        const file = await File.findById(req.params.id);
+        if (!file) throw Error('No file found');
+        if(file.user.username!=req.user.username) {
+            return res.status(401).json({msg: "User Unauthorized"})
+        }
+        const removed = await file.remove();
+        if (!removed)
+          throw Error('Something went wrong while trying to delete the file');
+    
+        //   TODO Remove File From LocalStorage and Storage Service As Well
+        res.status(200).json({ success: true });
+      } catch (e) {
+        res.status(400).json({ msg: e.message, success: false });
+      }
 })
 
 router.post('/togglePublic', auth,  async (req, res) => {

@@ -4,16 +4,6 @@ import {
   Container,
   Paper,
   Grid,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  ListItemAvatar,
-  Avatar,
-  IconButton,
-  Icon,
-  Popover,
-  Switch,
   Button,
   LinearProgress,
 } from '@material-ui/core';
@@ -23,7 +13,7 @@ import {
 } from '@material-ui/core/styles';
 import { Alert } from '@material-ui/lab';
 import axios from 'axios';
-import { getFiles } from '../../store/actions/fileActions';
+import Files from '../Files';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -64,30 +54,14 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-const Dashboard = ({ auth, isAuthenticated, getFiles, files }) => {
-    useEffect(()=> {
-        getFiles()
-    }, [getFiles])
+const Dashboard = ({ auth, isAuthenticated  }) => {
 
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [checked, setChecked] = useState(false);
     const [file, setFile] = useState();
     const [uploadedFile, setUploadedFile] = useState();
     const [progress, setProgress] = useState();
 
-    const handleSharePopup = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleSharePopupClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleShareToggle = () => {
-        setChecked(!checked)
-    };
-
+ 
     const changeFileHandler = (e) => {
         setFile(e.target.files[0])
     };
@@ -117,7 +91,7 @@ const Dashboard = ({ auth, isAuthenticated, getFiles, files }) => {
         }).catch(err => console.log(err))
     };
 
-    const open = Boolean(anchorEl);
+    
 
     if(!isAuthenticated){
         return(
@@ -140,61 +114,17 @@ const Dashboard = ({ auth, isAuthenticated, getFiles, files }) => {
                     <Button className={classes.btn} variant="contained" color="primary" onClick={handleFileUpload}>Upload</Button>
                     
                 </Grid>
-                {files.map(file=>(
-                    <Grid item xs={12}>
-                        <List component="nav" aria-label="secondary mailbox folders">
-                            <ListItem className={classes.listItem}>
-                                <ListItemAvatar><Avatar src={file.user.avatar_url}></Avatar></ListItemAvatar>
-                                <ListItemText primary={file.original_name} secondary={file.uploaded_date.toLocaleDateString()}/>
-                                <IconButton>
-                                    <Icon>cloud_download</Icon>
-                                </IconButton>
-                                <IconButton onClick={handleSharePopup}>
-                                    <Icon>share</Icon>
-                                </IconButton>
-                                <IconButton>
-                                    <Icon>delete</Icon>
-                                </IconButton>
-                            </ListItem>
-                            <Popover 
-                                open={open}
-                                anchorEl={anchorEl}
-                                onClose={handleSharePopupClose}
-                                anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'center',
-                                }}
-                                transformOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'center',
-                                }}
-                                >
-                                <Paper className={classes.paper}>
-                                    <span>Public Sharing:</span> 
-                                    <Switch
-                                        checked={checked}
-                                        onChange={handleShareToggle}
-                                        color="success"
-                                        name="shareToggler"
-                                    />
-                                </Paper>
-                            </Popover>
-                        </List>
-                    </Grid>
-                ))}
-                
+                {auth.user && isAuthenticated?<Files />: null}
             </Grid>
         </Container>
     );
 };
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return ({
         auth: state.auth,
-        isAuthenticated: state.auth.isAuthenticated,
-        files: state.files.files
+        isAuthenticated: state.auth.isAuthenticated
       })
 };
 
-export default connect(mapStateToProps, {getFiles})(Dashboard);
+export default connect(mapStateToProps, null)(Dashboard);
